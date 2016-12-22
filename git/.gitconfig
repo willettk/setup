@@ -1,0 +1,46 @@
+[core]
+    editor = vim
+	excludesfile = /Users/$USER/.gitignore_global
+[user]
+	name = Kyle
+	email = willettk@gmail.com
+[credential]
+	helper = osxkeychain
+[grep]
+	extendRegexp = true
+	lineNumber = true
+[push]
+	default = simple
+[diff]
+    external = git_diff_wrapper
+[pager]
+    diff = 
+[merge]
+    tool = vimdiff
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[github]
+    user = willettk
+[alias]
+    co = checkout
+    c = commit
+    s = status
+    a = add
+    br = branch
+    p = pull
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
+    ds = diff --staged
+    amend = commit --amend -C HEAD
+    undo = reset --soft HEAD^
+    ls = log --pretty=format:'%C(yellow)%h %C(blue)%ad%C(red)%d %C(reset)%s%C(green) [%cn]' --decorate --date=short
+    standup = !git log --since '1 day ago' --oneline --author="$(git config user.name)"
+    graph = log --graph --pretty=format':%C(yellow)%h%Cblue%d%Creset %s %C(white) %an, %ar%Creset'
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true

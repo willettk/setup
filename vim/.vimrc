@@ -14,6 +14,7 @@ set nocp
 set nospell
 colorscheme darkblue
 set nostartofline
+set linebreak
 set nobackup
 set ignorecase
 set smartcase " 1/19/2012 - case-sensitive if caps

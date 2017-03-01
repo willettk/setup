@@ -17,14 +17,15 @@ set nostartofline
 set linebreak
 set nobackup
 set ignorecase
-set smartcase " 1/19/2012 - case-sensitive if caps
+set smartcase
 set wrap
+set number
 set ruler
 set hlsearch
 syntax on
 set vb t_vb=   " When no beep or flash is wanted, use ":set vb t_vb=".
 set bs=2
-set autoindent
+set smartindent
 set popt=duplex:long,syntax:y
 set formatoptions=trocql
 set shiftwidth=4 " applies to >>, etc.
@@ -35,6 +36,8 @@ set is " search as you type
 set autoread " auto-reload
 "set scrollbind  " not on by default because can be annoying
 set history=10000
+set gcr=a:blinkon0
+set tabpagemax=25
 
 " buffers in the background remain open (useful for cmd line)
 set hidden
@@ -44,6 +47,17 @@ set hidden
 set suffixes=.log,.bak,~,.o,.h,.info,.swp,.aux,.swo,.bbl,.blg,.pdf
 set wildignore=*.aux,*.pdf,*.blg,*.fits,*.png
 
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+    \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+    \gvy/<C-R><C-R>=substitute(
+    \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+    \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+    \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+    \gvy?<C-R><C-R>=substitute(
+    \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+    \gV:call setreg('"', old_reg, old_regtype)<CR>
  
 
 " Found 1/12/2012: http://stackoverflow.com/questions/3607516/vim-folding-messes-up-syntax-highlighting
@@ -60,18 +74,6 @@ set wildignore=*.aux,*.pdf,*.blg,*.fits,*.png
 runtime macros/matchit.vim
 " tab completion... wow I missed this
 set wildmenu
-"set title " change terminal title?
-
-" WHOA: http://briancarper.net/blog/448/vim-regexes-are-awesome
-" (this stuff is 1/19/2012 too) http://briancarper.net/blog/376/stupid-vim-trick-and-mental-illness
-" Heh - these two commands add a timestamp to ~/timestamps_vim_write every time I hit :w
-"cabbrev w <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'W' : 'w')<CR>
-"command! -nargs=* W :execute("silent !echo " . strftime("%Y-%m-%d %H:%M:%S") . " >> ~/timestamps_vim_write")|w <args>
-
-" 1/19/2012 http://www.vim.org/scripts/script.php?script_id=2332
-"call pathogen#infect() 
-" http://stackoverflow.com/questions/3383502/pathogen-does-not-load-plugins
-"call pathogen#runtime_append_all_bundles() 
 
 nnoremap <F5> :GundoToggle<CR>
 
@@ -111,8 +113,6 @@ command! -complete=file -nargs=* Svn call s:RunShellCommand('svn '.<q-args>)
 command! -complete=file -nargs=* Bzr call s:RunShellCommand('bzr '.<q-args>)
 command! -complete=file -nargs=* Hg  call s:RunShellCommand('hg '.<q-args>)
 
-"added 10/6/07
-set number
 
 " this only applies if set smartindent
 inoremap # X#
@@ -153,6 +153,16 @@ map ,x :Ex<CR><C-W>_
 map ,v :sp /Users/$USER/.vimrc<CR><C-W>_
 map ,t :tabnew<CR><C-W>_
 map <silent> ,s :source /Users/$USER/.vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+
+" Trim trailing whitespace
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+command! TrimWhitespace call TrimWhitespace()
+:noremap ,w :call TrimWhitespace()<CR>
 
 " function: NextField
 " " Args: fieldsep,minlensep,padstr,offset
@@ -309,7 +319,9 @@ function! MyGrep(paths, ...)
     endif
 endfunction
 
-
+" Hive files
+au BufNewFile,BufRead *.hql set filetype=hive expandtab
+au BufNewFile,BufRead *.q set filetype=hive expandtab
 
 autocmd BufRead *\.txt setlocal formatoptions=l
 autocmd BufRead *\.txt setlocal lbr
@@ -329,3 +341,7 @@ autocmd BufRead *\.txt vmap <up> gk
 autocmd BufRead *\.txt vmap <down> gj
 " for vmail:
 let g:vmail_flagged_color = "ctermfg=yellow ctermbg=black cterm=bold"
+
+if &diff
+    colorscheme evening
+endif

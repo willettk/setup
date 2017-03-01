@@ -5,7 +5,7 @@
 	name = Kyle
 	email = willettk@gmail.com
 [credential]
-	UseHttpPath = true
+    helper = osxkeychain
 [grep]
 	extendRegexp = true
 	lineNumber = true

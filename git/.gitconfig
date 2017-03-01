@@ -1,11 +1,11 @@
 [core]
     editor = vim
-	excludesfile = /Users/$USER/.gitignore_global
+	excludesfile = $HOME/.gitignore_global
 [user]
 	name = Kyle
 	email = willettk@gmail.com
 [credential]
-	helper = osxkeychain
+	UseHttpPath = true
 [grep]
 	extendRegexp = true
 	lineNumber = true
@@ -13,6 +13,8 @@
 	default = simple
 [diff]
     external = git_diff_wrapper
+[difftool]
+    prompt = false
 [pager]
     diff = 
 [merge]
